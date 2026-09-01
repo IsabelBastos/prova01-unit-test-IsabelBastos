@@ -1,34 +1,57 @@
+
 name: Build and Tests
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
+
   pull_request:
-    branches: [ main ]
-  schedule:   
+    branches: [main]
+
+  schedule:
     - cron: '0 12 * * *'
 
 jobs:
   build:
     name: Run Unit Tests
     runs-on: ubuntu-latest
+
     steps:
-    - uses: actions/checkout@v7.0.0
-    - name: Use Node.js 22
-      uses: actions/setup-node@v7.0.0
-      with:
-        node-version: 22
-        cache: 'npm'
-    - run: npm install      
-    - run: npm run coverage
+      - uses: actions/checkout@v7.0.0
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@v7.0.0
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests with coverage
+        run: npm run coverage
 
   sonarcloud:
     name: Run SonarCloud
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v7.0.0
         with:
           fetch-depth: 0
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@v7.0.0
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Generate coverage
+        run: npm run coverage
+
       - name: Official SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v8.2.1
         env:
